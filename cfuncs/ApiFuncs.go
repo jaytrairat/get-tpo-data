@@ -72,16 +72,3 @@ func GetCaseList(startDate, endDate string, limit int) ([]CaseData, error) {
 
 	return handleApiResponse[CaseData](response.Body)
 }
-
-func GetCaseDetail(caseId string) ([]CaseDetailData, error) {
-	const caseDetailAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%s&excludeSystemCreate=true"
-
-	url := fmt.Sprintf(caseDetailAPIURL, caseId)
-	response, err := makeGetRequest(url)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	return handleApiResponse[CaseDetailData](response.Body)
-}

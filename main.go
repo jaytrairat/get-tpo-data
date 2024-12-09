@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -19,6 +18,7 @@ func main() {
 
 	var startDate string
 	var endDate string
+	var limit int
 	var rootCmd = &cobra.Command{
 		Use:   "get-tpo-data",
 		Short: "TPO Data extractor",
@@ -31,15 +31,16 @@ func main() {
 				endDate = defaultEndDate
 			}
 
-			cases, _ := cfuncs.GetCaseList(startDate, endDate, 1)
-			fmt.Println(cases)
+			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
+			if cases != nil {
+				cfuncs.CreateExcelFileForCaseList(cases, startDate, endDate, limit)
+			}
 
-			casesDetail, _ := cfuncs.GetCaseDetail("881127")
-			fmt.Println(casesDetail)
 		},
 	}
 	rootCmd.Flags().StringVarP(&startDate, "startDate", "s", "", "Start date in YYYY-MM-DD format (default: 1 month ago)")
 	rootCmd.Flags().StringVarP(&endDate, "endDate", "e", "", "End date in YYYY-MM-DD format (default: today)")
+	rootCmd.Flags().IntVarP(&limit, "limit", "l", 1, "Number of rows to be extracted")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalf("Error executing command: %v", err)
 	}

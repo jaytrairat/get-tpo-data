@@ -17,10 +17,3 @@ type CaseData struct {
 	TrackingCode string `json:"TrackingCode"`
 	StatusName   string `json:"StatusName"`
 }
-
-type CaseDetailData struct {
-	InstId           int    `json:"INST_ID"`
-	TrackingCode     string `json:"TRACKING_CODE"`
-	Remark           string `json:"REMARK"`
-	PersonalFullName string `json:"PERSONAL_FULL_NAME"`
-}

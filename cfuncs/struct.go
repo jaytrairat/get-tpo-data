@@ -1,11 +1,11 @@
 package cfuncs
 
-type ApiResponse struct {
-	Value Value `json:"Value"`
+type ApiResponse[T any] struct {
+	Value Value[T] `json:"Value"`
 }
 
-type Value struct {
-	Data []CaseData `json:"Data"`
+type Value[T any] struct {
+	Data []T `json:"Data"`
 }
 
 type CaseData struct {

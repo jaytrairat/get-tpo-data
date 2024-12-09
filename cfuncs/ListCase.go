@@ -39,7 +39,7 @@ func ListCase(startDate string, endDate string, limit int) []CaseData {
 		log.Fatalf("API returned status code: %d", response.StatusCode)
 	}
 
-	var apiResponse ApiResponse
+	var apiResponse ApiResponse[CaseData]
 	if err := json.NewDecoder(response.Body).Decode(&apiResponse); err != nil {
 		log.Fatalf("Error decoding JSON response: %v", err)
 	}

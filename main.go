@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -30,13 +31,11 @@ func main() {
 				endDate = defaultEndDate
 			}
 
-			cases := cfuncs.ListCase(startDate, endDate, 1)
-			// Write cases to Excel
-			filename := "cases.xlsx"
-			if err := cfuncs.WriteCasesToExcel(cases, filename); err != nil {
-				log.Fatalf("Error writing cases to Excel: %v", err)
-			}
+			cases, _ := cfuncs.GetCaseList(startDate, endDate, 1)
+			fmt.Println(cases)
 
+			casesDetail, _ := cfuncs.GetCaseDetail("881127")
+			fmt.Println(casesDetail)
 		},
 	}
 	rootCmd.Flags().StringVarP(&startDate, "startDate", "s", "", "Start date in YYYY-MM-DD format (default: 1 month ago)")

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func ListCase(startDate string, endDate string, limit int) {
+func ListCase(startDate string, endDate string, limit int) []CaseData {
 	LIST_CASES_API := "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?RequireTotalCount=true&Ext2=3527&RoleCode=MNG_BKK&Offset=0&Length=%d&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&RequireStuckCase=false"
 
 	bearerToken := os.Getenv("BEARER_TOKEN")
@@ -44,7 +44,6 @@ func ListCase(startDate string, endDate string, limit int) {
 		log.Fatalf("Error decoding JSON response: %v", err)
 	}
 
-	// Print the response (everything as string)
-	fmt.Printf("Extracted Data: %+v\n", apiResponse)
+	return apiResponse.Value.Data
 
 }

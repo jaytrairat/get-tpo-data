@@ -30,7 +30,13 @@ func main() {
 				endDate = defaultEndDate
 			}
 
-			cfuncs.ListCase(startDate, endDate, 1)
+			cases := cfuncs.ListCase(startDate, endDate, 1)
+			// Write cases to Excel
+			filename := "cases.xlsx"
+			if err := cfuncs.WriteCasesToExcel(cases, filename); err != nil {
+				log.Fatalf("Error writing cases to Excel: %v", err)
+			}
+
 		},
 	}
 	rootCmd.Flags().StringVarP(&startDate, "startDate", "s", "", "Start date in YYYY-MM-DD format (default: 1 month ago)")

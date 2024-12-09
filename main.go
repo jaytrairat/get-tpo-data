@@ -3,18 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/jaytrairat/get-tpo-data/cfuncs"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
-
-type ApiResponse struct {
-	Data string `json:"data"`
-}
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -26,21 +23,25 @@ func main() {
 		Short: "TPO Data extractor",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			apiUrl := os.Getenv("API_URL")
+			listCasesApiUrl := os.Getenv("LIST_CASES_API")
 			bearerToken := os.Getenv("BEARER_TOKEN")
 
-			if apiUrl == "" || bearerToken == "" {
-				log.Fatalf("API_URL or BEARER_TOKEN not set in environment variables")
+			if listCasesApiUrl == "" || bearerToken == "" {
+				log.Fatalf("LIST_CASES_API or BEARER_TOKEN not set in environment variables")
 			}
 
-			req, err := http.NewRequest("GET", apiUrl, nil)
+			formattedUrl := fmt.Sprintf(listCasesApiUrl, "2024-12-01", "2024-12-05")
+			fmt.Println(formattedUrl)
+			req, err := http.NewRequest("GET", formattedUrl, nil)
 			if err != nil {
 				log.Fatalf("Error creating request: %v", err)
 			}
 
 			req.Header.Set("Authorization", "Bearer "+bearerToken)
 
-			client := &http.Client{}
+			client := &http.Client{
+				Timeout: 60 * time.Second,
+			}
 			response, err := client.Do(req)
 			if err != nil {
 				log.Fatalf("Error making API request: %v", err)
@@ -51,20 +52,13 @@ func main() {
 				log.Fatalf("API returned status code: %d", response.StatusCode)
 			}
 
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Fatalf("Error reading response body: %v", err)
+			var apiResponse cfuncs.ApiResponse
+			if err := json.NewDecoder(response.Body).Decode(&apiResponse); err != nil {
+				log.Fatalf("Error decoding JSON response: %v", err)
 			}
 
-			fmt.Println("Response Body (raw):")
-			fmt.Println(string(body))
-
-			var apiResponse ApiResponse
-			if err := json.Unmarshal(body, &apiResponse); err != nil {
-				log.Fatalf("Error unmarshalling JSON: %v", err)
-			}
-
-			fmt.Printf("Extracted Data: %s\n", apiResponse.Data)
+			// Print the response (everything as string)
+			fmt.Printf("Extracted Data: %+v\n", apiResponse)
 		},
 	}
 

@@ -6,7 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -15,16 +17,33 @@ type ApiResponse struct {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	var rootCmd = &cobra.Command{
-		Use:   "get-tpo-data [url]",
+		Use:   "get-tpo-data",
 		Short: "TPO Data extractor",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			url := args[0]
-			fmt.Println(url)
-			response, respError := http.Get("https://jsonplaceholder.typicode.com/todos/1")
-			if respError != nil {
-				fmt.Println("Error when trying to call API")
+			apiUrl := os.Getenv("API_URL")
+			bearerToken := os.Getenv("BEARER_TOKEN")
+
+			if apiUrl == "" || bearerToken == "" {
+				log.Fatalf("API_URL or BEARER_TOKEN not set in environment variables")
+			}
+
+			req, err := http.NewRequest("GET", apiUrl, nil)
+			if err != nil {
+				log.Fatalf("Error creating request: %v", err)
+			}
+
+			req.Header.Set("Authorization", "Bearer "+bearerToken)
+
+			client := &http.Client{}
+			response, err := client.Do(req)
+			if err != nil {
+				log.Fatalf("Error making API request: %v", err)
 			}
 			defer response.Body.Close()
 
@@ -32,10 +51,12 @@ func main() {
 				log.Fatalf("API returned status code: %d", response.StatusCode)
 			}
 
-			body, ioError := io.ReadAll(response.Body)
-			if ioError != nil {
-				fmt.Println("Error when extract response")
+			body, err := io.ReadAll(response.Body)
+			if err != nil {
+				log.Fatalf("Error reading response body: %v", err)
 			}
+
+			fmt.Println("Response Body (raw):")
 			fmt.Println(string(body))
 
 			var apiResponse ApiResponse

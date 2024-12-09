@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-func ListCase() {
-	LIST_CASES_API := "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?RequireTotalCount=true&Ext2=3527&RoleCode=MNG_BKK&Offset=0&Length=1&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&RequireStuckCase=false"
+func ListCase(startDate string, endDate string, limit int) {
+	LIST_CASES_API := "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?RequireTotalCount=true&Ext2=3527&RoleCode=MNG_BKK&Offset=0&Length=%d&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&RequireStuckCase=false"
 
 	bearerToken := os.Getenv("BEARER_TOKEN")
 
@@ -18,8 +18,7 @@ func ListCase() {
 		log.Fatalf("BEARER_TOKEN not set in environment variables")
 	}
 
-	formattedUrl := fmt.Sprintf(LIST_CASES_API, "2024-12-01", "2024-12-05")
-	fmt.Println(formattedUrl)
+	formattedUrl := fmt.Sprintf(LIST_CASES_API, limit, startDate, endDate)
 	req, err := http.NewRequest("GET", formattedUrl, nil)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)

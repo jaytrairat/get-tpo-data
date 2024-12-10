@@ -61,16 +61,23 @@ func DecodeApiResponse[TargetStruct any](body io.Reader) ([]TargetStruct, error)
 	return nil, fmt.Errorf("failed to decode Value into defined structs")
 }
 
-func GetCaseList(startDate, endDate string, limit int) ([]StCaseList, error) {
+func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?StatusCode=&StateCode=&ProcessedStateCode=&Ext2=3527&RoleCode=MNG_BKK&Offset=1&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
 
 	url := fmt.Sprintf(listCasesAPIURL, limit, startDate, endDate)
 	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
-		return nil, err
+		return StCaseList{}, err
 	}
 	defer response.Body.Close()
-	return DecodeApiResponse[StCaseList](response.Body)
+
+	var caseList StCaseList
+	decoder := json.NewDecoder(response.Body)
+	if err := decoder.Decode(&caseList); err != nil {
+		return StCaseList{}, fmt.Errorf("failed to decode ApiResponse: %w", err)
+	}
+
+	return caseList, nil
 }
 
 func GetRelatedIds(caseId int) ([]StRelatedCase, error) {
@@ -89,4 +96,16 @@ func GetRelatedIds(caseId int) ([]StRelatedCase, error) {
 
 	defer response.Body.Close()
 	return DecodeApiResponse[StRelatedCase](response.Body)
+}
+
+func GetCaseDetail(caseId int) ([]StCaseDetail, error) {
+	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%d&excludeSystemCreate=true"
+	url := fmt.Sprintf(listCasesAPIURL, caseId)
+	response, err := makeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+	return DecodeApiResponse[StCaseDetail](response.Body)
 }

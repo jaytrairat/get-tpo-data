@@ -14,9 +14,13 @@ type ValueWithData[T any] struct {
 }
 
 type StCaseList struct {
-	InstId       int    `json:"InstId"`
-	TrackingCode string `json:"TrackingCode"`
-	OptionalData string `json:"OptionalData"`
+	Value struct {
+		Data []struct {
+			InstId       int    `json:"InstId"`
+			TrackingCode string `json:"TrackingCode"`
+			OptionalData string `json:"OptionalData"`
+		} `json:"Data"`
+	} `json:"Value"`
 }
 
 type StRelatedCase struct {

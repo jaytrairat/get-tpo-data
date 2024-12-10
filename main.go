@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/jaytrairat/get-tpo-data/cfuncs"
@@ -36,14 +37,19 @@ func main() {
 			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
 			if len(cases) != 0 {
 				fmt.Printf("Info :: %d cases found, trying to get related cases\n", len(cases))
-				var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "RelatedIds"}
+				var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "Description", "RelatedIds"}
 				var result [][]string
 				for i, icase := range cases {
 					bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', len(cases)-i)))
 					fmt.Printf("\rLoading... %s", bar)
 					caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
 					if len(caseData) != 0 {
-						result = append(result, []string{fmt.Sprint(icase.InstId), icase.TrackingCode, fmt.Sprint(len(caseData)), ""})
+						var caseNos []string
+
+						for _, item := range caseData {
+							caseNos = append(caseNos, item.CaseNo)
+						}
+						result = append(result, []string{fmt.Sprint(icase.InstId), icase.TrackingCode, fmt.Sprint(len(caseData)), icase.OptionalData, strings.Join(caseNos, ",")})
 					}
 				}
 				fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))

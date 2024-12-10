@@ -16,8 +16,7 @@ type ValueWithData[T any] struct {
 type CaseData struct {
 	InstId       int    `json:"InstId"`
 	TrackingCode string `json:"TrackingCode"`
-	StatusName   string `json:"StatusName"`
-	DataId       string `json:"DATA_ID"`
+	OptionalData string `json:"OptionalData"`
 }
 
 type RelatedCase struct {

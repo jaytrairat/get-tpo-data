@@ -32,7 +32,7 @@ func main() {
 			if endDate == "" {
 				endDate = defaultEndDate
 			}
-
+			totalWidth := 25
 			fmt.Printf("Info :: Getting data from %s to %s with limit %d\n", startDate, endDate, limit)
 			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
 			numberOfCases := len(cases.Value.Data)
@@ -44,8 +44,11 @@ func main() {
 					caseDetail, _ := cfuncs.GetCaseDetail(icase.InstId)
 
 					if len(caseDetail.Value) != 0 {
-						bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', numberOfCases-i)))
-						fmt.Printf("\rLoading... %s", bar)
+						progress := i * totalWidth / numberOfCases
+						bar := fmt.Sprintf("[%s%s]",
+							string(cfuncs.RepeatRune('=', progress)),
+							string(cfuncs.RepeatRune(' ', totalWidth-progress)))
+						fmt.Printf("\rLoading... %s %d%%", bar, progress*100/totalWidth)
 						caseData, _ := cfuncs.GetRelatedIds(caseDetail.Value[0].DataId)
 
 						if len(caseData.Value.Data) != 0 {

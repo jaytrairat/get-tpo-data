@@ -42,7 +42,6 @@ func main() {
 			// }
 			var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "RelatedIds"}
 			var mocked [][]string = [][]string{
-				{"ID", "Name", "Age"}, // Header row
 				{"1", "Alice", "25"},
 				{"2", "Bob", "30"},
 				{"3", "Charlie", "35"},

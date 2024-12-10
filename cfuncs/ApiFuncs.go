@@ -70,15 +70,6 @@ func GetCaseList(startDate, endDate string, limit int) ([]CaseData, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-
-	fmt.Println("Response Body:")
-	fmt.Println(string(body))
-
 	return DecodeApiResponse[CaseData](response.Body)
 }
 
@@ -86,7 +77,6 @@ func GetRelatedIds(caseId int) ([]RelatedCase, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
 
 	url := fmt.Sprintf(listCasesAPIURL, caseId)
-	fmt.Println(url)
 	data, _ := json.Marshal(map[string]string{
 		"Offset": "0",
 		"Length": "10000",
@@ -98,14 +88,5 @@ func GetRelatedIds(caseId int) ([]RelatedCase, error) {
 	}
 
 	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-
-	fmt.Println("Response Body:")
-	fmt.Println(string(body))
-
 	return DecodeApiResponse[RelatedCase](response.Body)
 }

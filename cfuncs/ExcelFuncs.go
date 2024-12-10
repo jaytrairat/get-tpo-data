@@ -9,7 +9,7 @@ import (
 )
 
 func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string) error {
-	currentDate := time.Now().Format("2006-01-02")
+	currentDate := time.Now().Format("2006-01-02_15-04-05")
 	folderName := fmt.Sprintf("%s_caseList", name)
 	if err := os.MkdirAll(folderName, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create folder: %w", err)

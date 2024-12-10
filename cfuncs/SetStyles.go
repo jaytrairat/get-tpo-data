@@ -11,8 +11,8 @@ const (
 )
 
 var columnWidths = map[string]float64{
-	"A": 18,
-	"B": 22,
+	"A": 22,
+	"B": 50,
 	"C": 15,
 	"D": 60,
 	"E": 60,

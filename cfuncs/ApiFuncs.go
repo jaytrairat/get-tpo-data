@@ -46,9 +46,9 @@ func makeRequest(url, method string, body io.Reader) (*http.Response, error) {
 }
 
 func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
-	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?StatusCode=&StateCode=&ProcessedStateCode=&Ext2=3527&RoleCode=MNG_BKK&Offset=1&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
+	const apiUrl = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?RequireTotalCount=true&StatusCode=&StateCode=&ProcessedStateCode=&RoleCode=ROOT&Offset=0&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
 
-	url := fmt.Sprintf(listCasesAPIURL, limit, startDate, endDate)
+	url := fmt.Sprintf(apiUrl, limit, startDate, endDate)
 	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
 		return StCaseList{}, err
@@ -65,9 +65,9 @@ func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 }
 
 func GetRelatedIds(caseId int) (StRelatedCase, error) {
-	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
+	const apiUrl = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
 
-	url := fmt.Sprintf(listCasesAPIURL, caseId)
+	url := fmt.Sprintf(apiUrl, caseId)
 
 	data, _ := json.Marshal(map[string]string{
 		"Offset": "0",
@@ -91,8 +91,8 @@ func GetRelatedIds(caseId int) (StRelatedCase, error) {
 }
 
 func GetCaseDetail(caseId int) (StCaseDetail, error) {
-	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%d&excludeSystemCreate=true"
-	url := fmt.Sprintf(listCasesAPIURL, caseId)
+	const apiUrl = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%d&excludeSystemCreate=true"
+	url := fmt.Sprintf(apiUrl, caseId)
 	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
 		return StCaseDetail{}, err

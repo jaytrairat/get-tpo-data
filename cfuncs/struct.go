@@ -9,11 +9,17 @@ type ApiResponse[T any] struct {
 }
 
 type ValueWithData[T any] struct {
-	Data []T `json:"Data"`
+	Data       []T `json:"Data"`
+	TotalCount int `json:"TotalCount"`
 }
 
 type CaseData struct {
 	InstId       int    `json:"InstId"`
 	TrackingCode string `json:"TrackingCode"`
 	StatusName   string `json:"StatusName"`
+	DataId       string `json:"DATA_ID"`
+}
+
+type RelatedCase struct {
+	TrackingCode string `json:"TrackingCode"`
 }

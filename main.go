@@ -31,10 +31,16 @@ func main() {
 				endDate = defaultEndDate
 			}
 
-			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
-			if cases != nil {
-				cfuncs.CreateExcelFileForCaseList(cases, startDate, endDate, limit)
-			}
+			// cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
+			// fmt.Println(len(cases))
+			// if len(cases) != 0 {
+			// 	for _, icase := range cases {
+			// 		caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
+			// 		fmt.Println(icase.InstId, caseData)
+			// 	}
+			// 	// cfuncs.CreateExcelFileForCaseList(cases, startDate, endDate, limit)
+			// }
+			cfuncs.GetRelatedIds(893813)
 
 		},
 	}

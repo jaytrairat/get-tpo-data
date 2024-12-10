@@ -1,6 +1,7 @@
 package cfuncs
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,57 +19,93 @@ func getBearerToken() string {
 	return bearerToken
 }
 
-func makeGetRequest(url string) (*http.Response, error) {
+func makeRequest(url, method string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: 60 * time.Second,
 	}
-	req, err := http.NewRequest("GET", url, nil)
+
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}
+
 	req.Header.Set("Authorization", "Bearer "+getBearerToken())
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making API request: %w", err)
 	}
+
 	if resp.StatusCode != http.StatusOK {
-		defer resp.Body.Close()
+		resp.Body.Close()
 		return nil, fmt.Errorf("API returned status code: %d", resp.StatusCode)
 	}
+
 	return resp, nil
 }
 
-func handleApiResponse[T any](body io.Reader) ([]T, error) {
-	var apiResponse ApiResponse[T]
+func DecodeApiResponse[TargetStruct any](body io.Reader) ([]TargetStruct, error) {
+	var apiResponse ApiResponse[TargetStruct]
 
 	decoder := json.NewDecoder(body)
 	if err := decoder.Decode(&apiResponse); err != nil {
 		return nil, fmt.Errorf("failed to decode ApiResponse: %w", err)
 	}
 
-	var valueWithData ValueWithData[T]
+	var valueWithData ValueWithData[TargetStruct]
 	if err := json.Unmarshal(apiResponse.Value, &valueWithData); err == nil {
 		return valueWithData.Data, nil
-	}
-
-	var valueAsArray []T
-	if err := json.Unmarshal(apiResponse.Value, &valueAsArray); err == nil {
-		return valueAsArray, nil
 	}
 
 	return nil, fmt.Errorf("failed to decode Value into defined structs")
 }
 
 func GetCaseList(startDate, endDate string, limit int) ([]CaseData, error) {
-	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?RequireTotalCount=true&Ext2=3527&RoleCode=MNG_BKK&Offset=0&Length=%d&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&RequireStuckCase=false"
+	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?StatusCode=&StateCode=&ProcessedStateCode=&Ext2=3527&RoleCode=MNG_BKK&Offset=1&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
 
 	url := fmt.Sprintf(listCasesAPIURL, limit, startDate, endDate)
-	response, err := makeGetRequest(url)
+	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	return handleApiResponse[CaseData](response.Body)
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	fmt.Println("Response Body:")
+	fmt.Println(string(body))
+
+	return DecodeApiResponse[CaseData](response.Body)
+}
+
+func GetRelatedIds(caseId int) ([]RelatedCase, error) {
+	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
+
+	url := fmt.Sprintf(listCasesAPIURL, caseId)
+	fmt.Println(url)
+	data, _ := json.Marshal(map[string]string{
+		"Offset": "0",
+		"Length": "10000",
+	})
+
+	response, err := makeRequest(url, "POST", bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	fmt.Println("Response Body:")
+	fmt.Println(string(body))
+
+	return DecodeApiResponse[RelatedCase](response.Body)
 }

@@ -39,3 +39,11 @@ type StCaseDetail struct {
 		DataId int `json:"DATA_ID"`
 	} `json:"Value"`
 }
+
+type StBankAccount struct {
+	Value []struct {
+		BankOriginalAccount   string `json:"BANK_ORIGIN_ACCOUNT"`
+		BankOriginAccountName string `json:"BANK_ORIGIN_ACCOUNT_NAME"`
+		BankOriginName        string `json:"BANK_ORIGIN_NAME"`
+	} `json:"Value"`
+}

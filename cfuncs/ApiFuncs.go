@@ -55,13 +55,13 @@ func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 	}
 	defer response.Body.Close()
 
-	var caseList StCaseList
+	var result StCaseList
 	decoder := json.NewDecoder(response.Body)
-	if err := decoder.Decode(&caseList); err != nil {
+	if err := decoder.Decode(&result); err != nil {
 		return StCaseList{}, fmt.Errorf("failed to decode caseList api: %w", err)
 	}
 
-	return caseList, nil
+	return result, nil
 }
 
 func GetRelatedIds(caseId int) (StRelatedCase, error) {
@@ -81,13 +81,13 @@ func GetRelatedIds(caseId int) (StRelatedCase, error) {
 
 	defer response.Body.Close()
 
-	var relatedCase StRelatedCase
+	var result StRelatedCase
 	decoder := json.NewDecoder(response.Body)
-	if err := decoder.Decode(&relatedCase); err != nil {
+	if err := decoder.Decode(&result); err != nil {
 		return StRelatedCase{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
 	}
 
-	return relatedCase, nil
+	return result, nil
 }
 
 func GetCaseDetail(caseId int) (StCaseDetail, error) {
@@ -99,11 +99,29 @@ func GetCaseDetail(caseId int) (StCaseDetail, error) {
 	}
 
 	defer response.Body.Close()
-	var caseDetail StCaseDetail
+	var result StCaseDetail
 	decoder := json.NewDecoder(response.Body)
-	if err := decoder.Decode(&caseDetail); err != nil {
+	if err := decoder.Decode(&result); err != nil {
 		return StCaseDetail{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
 	}
 
-	return caseDetail, nil
+	return result, nil
+}
+
+func GetBankAccount(caseId int) (StBankAccount, error) {
+	const apiUrl = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/casemoney/%d"
+	url := fmt.Sprintf(apiUrl, caseId)
+	response, err := makeRequest(url, "GET", nil)
+	if err != nil {
+		return StBankAccount{}, err
+	}
+
+	defer response.Body.Close()
+	var result StBankAccount
+	decoder := json.NewDecoder(response.Body)
+	if err := decoder.Decode(&result); err != nil {
+		return StBankAccount{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
+	}
+
+	return result, nil
 }

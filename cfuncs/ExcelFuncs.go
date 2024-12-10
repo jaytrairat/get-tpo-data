@@ -8,9 +8,9 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string) error {
+func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string, columnWidths map[string]float64) error {
 	currentDate := time.Now().Format("2006-01-02_15-04-05")
-	folderName := fmt.Sprintf("%s_caseList", name)
+	folderName := name
 	if err := os.MkdirAll(folderName, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create folder: %w", err)
 	}
@@ -30,10 +30,11 @@ func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name
 		}
 	}
 
-	SetColumnWidths(file)
-	SetStyles(file, len(caseList))
+	SetColumnWidths(file, columnWidths)
+	// TODO: fix column in excel to 10
+	SetStyles(file, len(caseList), 10)
 
-	excelFilePath := fmt.Sprintf("%s/export_at_%s_caseList.xlsx", folderName, currentDate)
+	excelFilePath := fmt.Sprintf("%s/export_%s.xlsx", folderName, currentDate)
 	if err := file.SaveAs(excelFilePath); err != nil {
 		return fmt.Errorf("ERROR :: failed to save Excel file: %w", err)
 	}

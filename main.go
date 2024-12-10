@@ -43,7 +43,7 @@ func main() {
 					fmt.Printf("\rLoading... %s", bar)
 					caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
 					if len(caseData) != 0 {
-						result = append(result, []string{fmt.Sprint(icase.InstId), icase.DataId, fmt.Sprint(len(caseData)), ""})
+						result = append(result, []string{fmt.Sprint(icase.InstId), icase.TrackingCode, fmt.Sprint(len(caseData)), ""})
 					}
 				}
 				fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))

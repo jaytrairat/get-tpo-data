@@ -8,19 +8,6 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func numberToExcelColumn(n int) string {
-	if n <= 0 {
-		return ""
-	}
-	column := ""
-	for n > 0 {
-		n--
-		remainder := n % 26
-		column = string('A'+remainder) + column
-		n = n / 26
-	}
-	return column
-}
 func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string) error {
 	currentDate := time.Now().Format("2006-01-02")
 	folderName := fmt.Sprintf("%s_caseList", name)
@@ -38,7 +25,8 @@ func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name
 	for i, caseData := range caseList {
 		row := i + 2
 		for j, rowData := range caseData {
-			file.SetCellValue("Sheet1", fmt.Sprintf("%s%d", numberToExcelColumn(j), row), rowData)
+			dataCell, _ := excelize.ColumnNumberToName(j + 1)
+			file.SetCellValue("Sheet1", fmt.Sprintf("%s%d", dataCell, row), rowData)
 		}
 	}
 

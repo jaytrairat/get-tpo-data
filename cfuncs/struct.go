@@ -13,15 +13,19 @@ type ValueWithData[T any] struct {
 	TotalCount int `json:"TotalCount"`
 }
 
-type CaseData struct {
+type StCaseList struct {
 	InstId       int    `json:"InstId"`
 	TrackingCode string `json:"TrackingCode"`
 	OptionalData string `json:"OptionalData"`
 }
 
-type RelatedCase struct {
+type StRelatedCase struct {
 	CaseId   int    `json:"CASE_ID"`
 	InstId   int    `json:"INST_ID"`
 	CaseNo   string `json:"CASE_NO"`
 	CaseType string `json:"CASE_TYPE_ABBR"`
+}
+
+type StCaseDetail struct {
+	DataId int `json:"DATA_ID"`
 }

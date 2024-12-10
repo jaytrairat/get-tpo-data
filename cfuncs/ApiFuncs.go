@@ -61,7 +61,7 @@ func DecodeApiResponse[TargetStruct any](body io.Reader) ([]TargetStruct, error)
 	return nil, fmt.Errorf("failed to decode Value into defined structs")
 }
 
-func GetCaseList(startDate, endDate string, limit int) ([]CaseData, error) {
+func GetCaseList(startDate, endDate string, limit int) ([]StCaseList, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?StatusCode=&StateCode=&ProcessedStateCode=&Ext2=3527&RoleCode=MNG_BKK&Offset=1&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
 
 	url := fmt.Sprintf(listCasesAPIURL, limit, startDate, endDate)
@@ -70,10 +70,10 @@ func GetCaseList(startDate, endDate string, limit int) ([]CaseData, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	return DecodeApiResponse[CaseData](response.Body)
+	return DecodeApiResponse[StCaseList](response.Body)
 }
 
-func GetRelatedIds(caseId int) ([]RelatedCase, error) {
+func GetRelatedIds(caseId int) ([]StRelatedCase, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
 
 	url := fmt.Sprintf(listCasesAPIURL, caseId)
@@ -88,5 +88,5 @@ func GetRelatedIds(caseId int) ([]RelatedCase, error) {
 	}
 
 	defer response.Body.Close()
-	return DecodeApiResponse[RelatedCase](response.Body)
+	return DecodeApiResponse[StRelatedCase](response.Body)
 }

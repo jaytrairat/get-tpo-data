@@ -37,7 +37,7 @@ func main() {
 			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
 			if len(cases) != 0 {
 				fmt.Printf("Info :: %d cases found, trying to get related cases\n", len(cases))
-				var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "Description", "RelatedIds"}
+				var excelHeaders []string = []string{"Link", "เลขคดี", "จำนวนเคสที่เกี่ยวข้อง", "รายละเอียด", "Case ids ที่เกี่ยวข้อง"}
 				var result [][]string
 				for i, icase := range cases {
 					bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', len(cases)-i)))

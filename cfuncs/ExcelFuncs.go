@@ -30,6 +30,9 @@ func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name
 		}
 	}
 
+	SetColumnWidths(file)
+	SetStyles(file, len(caseList))
+
 	excelFilePath := fmt.Sprintf("%s/export_at_%s_caseList.xlsx", folderName, currentDate)
 	if err := file.SaveAs(excelFilePath); err != nil {
 		return fmt.Errorf("ERROR :: failed to save Excel file: %w", err)

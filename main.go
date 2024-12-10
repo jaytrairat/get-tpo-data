@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -36,11 +37,18 @@ func main() {
 			// if len(cases) != 0 {
 			// 	for _, icase := range cases {
 			// 		caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
-			// 		fmt.Println(icase.InstId, caseData)
+			// 		var combinedCaseData []string =
 			// 	}
-			// 	// cfuncs.CreateExcelFileForCaseList(cases, startDate, endDate, limit)
 			// }
-			cfuncs.GetRelatedIds(893813)
+			var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "RelatedIds"}
+			var mocked [][]string = [][]string{
+				{"ID", "Name", "Age"}, // Header row
+				{"1", "Alice", "25"},
+				{"2", "Bob", "30"},
+				{"3", "Charlie", "35"},
+			}
+			var excelName string = fmt.Sprintf("%s_%s", startDate, endDate)
+			cfuncs.CreateExcelFileForCaseList(excelHeaders, mocked, excelName)
 
 		},
 	}

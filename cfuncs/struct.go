@@ -21,5 +21,8 @@ type CaseData struct {
 }
 
 type RelatedCase struct {
-	TrackingCode string `json:"TrackingCode"`
+	CaseId   int    `json:"CASE_ID"`
+	InstId   int    `json:"INST_ID"`
+	CaseNo   string `json:"CASE_NO"`
+	CaseType string `json:"CASE_TYPE_ABBR"`
 }

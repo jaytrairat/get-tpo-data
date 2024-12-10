@@ -117,6 +117,7 @@ func GetBankAccount(caseId int) (StBankAccount, error) {
 	}
 
 	defer response.Body.Close()
+
 	var result StBankAccount
 	decoder := json.NewDecoder(response.Body)
 	if err := decoder.Decode(&result); err != nil {

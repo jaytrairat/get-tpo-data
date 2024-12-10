@@ -75,7 +75,7 @@ func main() {
 					bankList, _ := cfuncs.GetBankAccount(caseDetail.Value[0].DataId)
 					if len(bankList.Value) != 0 {
 						for _, bankData := range bankList.Value {
-							result = append(result, []string{bankData.BankOriginalAccount, bankData.BankOriginAccountName, bankData.BankOriginName})
+							result = append(result, []string{bankData.BankAccount, bankData.BankAccountName, bankData.BankName})
 						}
 					}
 					var columnWidths = map[string]float64{

@@ -42,8 +42,8 @@ type StCaseDetail struct {
 
 type StBankAccount struct {
 	Value []struct {
-		BankOriginalAccount   string `json:"BANK_ORIGIN_ACCOUNT"`
-		BankOriginAccountName string `json:"BANK_ORIGIN_ACCOUNT_NAME"`
-		BankOriginName        string `json:"BANK_ORIGIN_NAME"`
+		BankAccount     string `json:"BANK_ACCOUNT"`
+		BankAccountName string `json:"BANK_ACCOUNT_NAME"`
+		BankName        string `json:"BANK_NAME"`
 	} `json:"Value"`
 }

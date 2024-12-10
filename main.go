@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/jaytrairat/get-tpo-data/cfuncs"
@@ -34,28 +35,33 @@ func main() {
 
 			fmt.Printf("Info :: Getting data from %s to %s with limit %d\n", startDate, endDate, limit)
 			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
-			if len(cases.Value.Data) != 0 {
-				fmt.Println(cases.Value.Data)
-				// fmt.Printf("Info :: %d cases found, trying to get related cases\n", len(cases))
-				// var excelHeaders []string = []string{"เลขคดี", "Link", "จำนวนเคสที่เกี่ยวข้อง", "รายละเอียด", "Case ids ที่เกี่ยวข้อง"}
-				// var result [][]string
-				// for i, icase := range cases.Value.Data {
-				// 	bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', len(cases)-i)))
-				// 	fmt.Printf("\rLoading... %s", bar)
-				// 	caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
-				// 	if len(caseData) != 0 {
-				// 		var caseNos []string
+			numberOfCases := len(cases.Value.Data)
+			if numberOfCases != 0 {
+				fmt.Printf("Info :: %d cases found, trying to get related cases\n", numberOfCases)
+				var excelHeaders []string = []string{"เลขคดี", "Link", "จำนวนเคสที่เกี่ยวข้อง", "รายละเอียด", "Case ids ที่เกี่ยวข้อง"}
+				var result [][]string
+				for i, icase := range cases.Value.Data {
+					caseDetail, _ := cfuncs.GetCaseDetail(icase.InstId)
 
-				// 		for _, item := range caseData {
-				// 			caseNos = append(caseNos, item.CaseNo)
-				// 		}
-				// 		result = append(result, []string{icase.TrackingCode, fmt.Sprintf("https://officer.thaipoliceonline.go.th/pct-in/officer/task-admin-view/%d#task-admin", icase.InstId), fmt.Sprint(len(caseData)), icase.OptionalData, strings.Join(caseNos, ",")})
-				// 	}
-				// }
-				// fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))
+					if len(caseDetail.Value) != 0 {
+						bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', numberOfCases-i)))
+						fmt.Printf("\rLoading... %s", bar)
+						caseData, _ := cfuncs.GetRelatedIds(caseDetail.Value[0].DataId)
 
-				// var excelName string = fmt.Sprintf("%s_%s", startDate, endDate)
-				// cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName)
+						if len(caseData.Value.Data) != 0 {
+							var caseNos []string
+
+							for _, item := range caseData.Value.Data {
+								caseNos = append(caseNos, item.CaseNo)
+							}
+							result = append(result, []string{icase.TrackingCode, fmt.Sprintf("https://officer.thaipoliceonline.go.th/pct-in/officer/task-admin-view/%d#task-admin", icase.InstId), fmt.Sprint(len(caseData.Value.Data)), icase.OptionalData, strings.Join(caseNos, ",")})
+						}
+					}
+				}
+				fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))
+
+				var excelName string = fmt.Sprintf("%s_%s", startDate, endDate)
+				cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName)
 			}
 
 		},

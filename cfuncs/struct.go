@@ -24,12 +24,18 @@ type StCaseList struct {
 }
 
 type StRelatedCase struct {
-	CaseId   int    `json:"CASE_ID"`
-	InstId   int    `json:"INST_ID"`
-	CaseNo   string `json:"CASE_NO"`
-	CaseType string `json:"CASE_TYPE_ABBR"`
+	Value struct {
+		Data []struct {
+			CaseId   int    `json:"CASE_ID"`
+			InstId   int    `json:"INST_ID"`
+			CaseNo   string `json:"CASE_NO"`
+			CaseType string `json:"CASE_TYPE_ABBR"`
+		} `json:"Data"`
+	} `json:"Value"`
 }
 
 type StCaseDetail struct {
-	DataId int `json:"DATA_ID"`
+	Value []struct {
+		DataId int `json:"DATA_ID"`
+	} `json:"Value"`
 }

@@ -45,22 +45,6 @@ func makeRequest(url, method string, body io.Reader) (*http.Response, error) {
 	return resp, nil
 }
 
-func DecodeApiResponse[TargetStruct any](body io.Reader) ([]TargetStruct, error) {
-	var apiResponse ApiResponse[TargetStruct]
-
-	decoder := json.NewDecoder(body)
-	if err := decoder.Decode(&apiResponse); err != nil {
-		return nil, fmt.Errorf("failed to decode ApiResponse: %w", err)
-	}
-
-	var valueWithData ValueWithData[TargetStruct]
-	if err := json.Unmarshal(apiResponse.Value, &valueWithData); err == nil {
-		return valueWithData.Data, nil
-	}
-
-	return nil, fmt.Errorf("failed to decode Value into defined structs")
-}
-
 func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInst/workflow/task-list-new?StatusCode=&StateCode=&ProcessedStateCode=&Ext2=3527&RoleCode=MNG_BKK&Offset=1&Length=%d&SortSelector=TrackingCode&SortDesc=true&StartDate=%s&EndDate=%s&CategoryId=1&Casetype=&IsCheck=&RequireStuckCase=false"
 
@@ -74,16 +58,17 @@ func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 	var caseList StCaseList
 	decoder := json.NewDecoder(response.Body)
 	if err := decoder.Decode(&caseList); err != nil {
-		return StCaseList{}, fmt.Errorf("failed to decode ApiResponse: %w", err)
+		return StCaseList{}, fmt.Errorf("failed to decode caseList api: %w", err)
 	}
 
 	return caseList, nil
 }
 
-func GetRelatedIds(caseId int) ([]StRelatedCase, error) {
+func GetRelatedIds(caseId int) (StRelatedCase, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
 
 	url := fmt.Sprintf(listCasesAPIURL, caseId)
+
 	data, _ := json.Marshal(map[string]string{
 		"Offset": "0",
 		"Length": "10000",
@@ -91,21 +76,34 @@ func GetRelatedIds(caseId int) ([]StRelatedCase, error) {
 
 	response, err := makeRequest(url, "POST", bytes.NewReader(data))
 	if err != nil {
-		return nil, err
+		return StRelatedCase{}, err
 	}
 
 	defer response.Body.Close()
-	return DecodeApiResponse[StRelatedCase](response.Body)
+
+	var relatedCase StRelatedCase
+	decoder := json.NewDecoder(response.Body)
+	if err := decoder.Decode(&relatedCase); err != nil {
+		return StRelatedCase{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
+	}
+
+	return relatedCase, nil
 }
 
-func GetCaseDetail(caseId int) ([]StCaseDetail, error) {
+func GetCaseDetail(caseId int) (StCaseDetail, error) {
 	const listCasesAPIURL = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%d&excludeSystemCreate=true"
 	url := fmt.Sprintf(listCasesAPIURL, caseId)
 	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
-		return nil, err
+		return StCaseDetail{}, err
 	}
 
 	defer response.Body.Close()
-	return DecodeApiResponse[StCaseDetail](response.Body)
+	var caseDetail StCaseDetail
+	decoder := json.NewDecoder(response.Body)
+	if err := decoder.Decode(&caseDetail); err != nil {
+		return StCaseDetail{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
+	}
+
+	return caseDetail, nil
 }

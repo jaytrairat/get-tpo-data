@@ -24,7 +24,6 @@ func numberToExcelColumn(n int) string {
 func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string) error {
 	currentDate := time.Now().Format("2006-01-02")
 	folderName := fmt.Sprintf("%s_caseList", name)
-
 	if err := os.MkdirAll(folderName, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create folder: %w", err)
 	}
@@ -45,9 +44,9 @@ func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name
 
 	excelFilePath := fmt.Sprintf("%s/export_at_%s_caseList.xlsx", folderName, currentDate)
 	if err := file.SaveAs(excelFilePath); err != nil {
-		return fmt.Errorf("failed to save Excel file: %w", err)
+		return fmt.Errorf("ERROR :: failed to save Excel file: %w", err)
 	}
 
-	fmt.Printf("Excel file for case list saved successfully")
+	fmt.Printf("INFO :: Excel file for case list saved successfully")
 	return nil
 }

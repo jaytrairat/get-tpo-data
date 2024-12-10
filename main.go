@@ -32,22 +32,25 @@ func main() {
 				endDate = defaultEndDate
 			}
 
-			// cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
-			// fmt.Println(len(cases))
-			// if len(cases) != 0 {
-			// 	for _, icase := range cases {
-			// 		caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
-			// 		var combinedCaseData []string =
-			// 	}
-			// }
-			var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "RelatedIds"}
-			var mocked [][]string = [][]string{
-				{"1", "Alice", "25"},
-				{"2", "Bob", "30"},
-				{"3", "Charlie", "35"},
+			fmt.Printf("Info :: Getting data from %s to %s with limit %d\n", startDate, endDate, limit)
+			cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
+			if len(cases) != 0 {
+				fmt.Printf("Info :: %d cases found, trying to get related cases\n", len(cases))
+				var excelHeaders []string = []string{"CaseId", "CaseNumber", "NumberOfRelatedIds", "RelatedIds"}
+				var result [][]string
+				for i, icase := range cases {
+					bar := fmt.Sprintf("[%s%s]", string(cfuncs.RepeatRune('=', i)), string(cfuncs.RepeatRune(' ', len(cases)-i)))
+					fmt.Printf("\rLoading... %s", bar)
+					caseData, _ := cfuncs.GetRelatedIds(icase.InstId)
+					if len(caseData) != 0 {
+						result = append(result, []string{fmt.Sprint(icase.InstId), icase.DataId, fmt.Sprint(len(caseData)), ""})
+					}
+				}
+				fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))
+
+				var excelName string = fmt.Sprintf("%s_%s", startDate, endDate)
+				cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName)
 			}
-			var excelName string = fmt.Sprintf("%s_%s", startDate, endDate)
-			cfuncs.CreateExcelFileForCaseList(excelHeaders, mocked, excelName)
 
 		},
 	}

@@ -118,9 +118,9 @@ func main() {
 	}
 	rootCmd.Flags().StringVarP(&startDate, "startDate", "s", time.Now().AddDate(0, -1, 0).Format("2006-01-02"), "Start date in YYYY-MM-DD format (default: 1 month ago)")
 	rootCmd.Flags().StringVarP(&endDate, "endDate", "e", time.Now().Format("2006-01-02"), "End date in YYYY-MM-DD format (default: today)")
-	rootCmd.Flags().IntVarP(&caseId, "caseId", "c", 1, "Case id from TPO")
 	rootCmd.Flags().IntVarP(&limit, "limit", "l", 1, "Number of rows to be extracted")
 	rootCmd.Flags().StringVarP(&task, "task", "t", "list-all", "Type of task to be executed (default:list-all) [list-all, related-case, bank-account]")
+	rootCmd.Flags().IntVarP(&caseId, "caseId", "c", 1, "Case id from TPO")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalf("Error executing command: %v", err)
 	}

@@ -35,7 +35,7 @@ func main() {
 					var excelHeaders []string = []string{"เลขคดี", "Link", "จำนวนเคสที่เกี่ยวข้อง", "รายละเอียด", "Case ids ที่เกี่ยวข้อง"}
 					var result [][]string
 					for i, icase := range cases.Value.Data {
-						caseDetail, _ := cfuncs.GetCaseDetail(icase.InstId)
+						caseDetail, _ := cfuncs.GetCaseDetailByInstId(icase.InstId)
 
 						if len(caseDetail.Value) != 0 {
 							progress := i * totalWidth / numberOfCases
@@ -67,15 +67,16 @@ func main() {
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
 			} else if task == "related-case" {
-				caseDetail, _ := cfuncs.GetCaseDetail(caseId)
+				caseDetail, _ := cfuncs.GetCaseDetailByInstId(caseId)
 				if len(caseDetail.Value) != 0 {
-					var excelHeaders []string = []string{"เลขรับแจ้งความ", "ประเภท", "หน่วยงานที่รับผิดชอบ", "สถานะ", "มูลค่าความเสียหาย"}
+					var excelHeaders []string = []string{"เลขรับแจ้งความ", "ประเภท", "หน่วยงานที่รับผิดชอบ", "สถานะ", "มูลค่าความเสียหาย", "รายละเอียด"}
 					var result [][]string
 					fmt.Println("INFO :: Getting related case")
 					relatedCase, _ := cfuncs.GetRelatedCase(caseDetail.Value[0].DataId)
 					if len(relatedCase.Value.Data) != 0 {
 						for _, data := range relatedCase.Value.Data {
-							result = append(result, []string{fmt.Sprint(data.CaseId), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue})
+							subCase, _ := cfuncs.GetCaseDetailByCaseId(data.CaseId)
+							result = append(result, []string{fmt.Sprint(data.CaseId), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue, subCase.Value.CaseBehavior})
 						}
 					}
 					var columnWidths = map[string]float64{
@@ -83,13 +84,14 @@ func main() {
 						"B": 50,
 						"C": 50,
 						"D": 50,
-						"E": 50,
+						"E": 30,
+						"F": 80,
 					}
 					var excelName string = fmt.Sprintf("related-case_%d", caseId)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
 			} else if task == "bank-account" && caseId != 0 {
-				caseDetail, _ := cfuncs.GetCaseDetail(caseId)
+				caseDetail, _ := cfuncs.GetCaseDetailByInstId(caseId)
 				if len(caseDetail.Value) != 0 {
 					var excelHeaders []string = []string{"เลขบัญชี", "ชื่อบัญชี", "ธนาคาร"}
 					var result [][]string

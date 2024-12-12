@@ -80,9 +80,6 @@ func GetRelatedCase(caseId int) (StRelatedCase, error) {
 
 	defer response.Body.Close()
 
-	// body, _ := io.ReadAll(response.Body)
-	// fmt.Println(string(body))
-
 	var result StRelatedCase
 	decoder := json.NewDecoder(response.Body)
 	if err := decoder.Decode(&result); err != nil {
@@ -92,19 +89,37 @@ func GetRelatedCase(caseId int) (StRelatedCase, error) {
 	return result, nil
 }
 
-func GetCaseDetail(caseId int) (StCaseDetail, error) {
+func GetCaseDetailByInstId(InstId int) (StCaseDetailByInstId, error) {
 	const apiUrl = "https://officer.thaipoliceonline.go.th/api/e-form/v1.0/BpmProcInstLog?instId=%d&excludeSystemCreate=true"
-	url := fmt.Sprintf(apiUrl, caseId)
+	url := fmt.Sprintf(apiUrl, InstId)
 	response, err := makeRequest(url, "GET", nil)
 	if err != nil {
-		return StCaseDetail{}, err
+		return StCaseDetailByInstId{}, err
 	}
 
 	defer response.Body.Close()
-	var result StCaseDetail
+	var result StCaseDetailByInstId
 	decoder := json.NewDecoder(response.Body)
 	if err := decoder.Decode(&result); err != nil {
-		return StCaseDetail{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
+		return StCaseDetailByInstId{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
+	}
+
+	return result, nil
+}
+
+func GetCaseDetailByCaseId(caseId int) (StCaseDetailByCaseId, error) {
+	const apiUrl = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/getbycaseid/%d"
+	url := fmt.Sprintf(apiUrl, caseId)
+	response, err := makeRequest(url, "GET", nil)
+	if err != nil {
+		return StCaseDetailByCaseId{}, err
+	}
+
+	defer response.Body.Close()
+	var result StCaseDetailByCaseId
+	decoder := json.NewDecoder(response.Body)
+	if err := decoder.Decode(&result); err != nil {
+		return StCaseDetailByCaseId{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
 	}
 
 	return result, nil

@@ -40,10 +40,20 @@ type StRelatedCase struct {
 	} `json:"Value"`
 }
 
-type StCaseDetail struct {
+type StCaseDetailByInstId struct {
 	Value []struct {
 		DataId int `json:"DATA_ID"`
 	} `json:"Value"`
+}
+
+type StCaseDetailByCaseId struct {
+	Value struct {
+		CaseId       int    `json="CASE_ID"`
+		CaseNo       int    `json="CASE_NO"`
+		CaseType     string `json:"CASE_TYPE_NAME"`
+		CaseBehavior string `json:"CASE_BEHAVIOR"`
+		DamageValue  string `json:"DAMAGE_VALUE"`
+	}
 }
 
 type StBankAccount struct {

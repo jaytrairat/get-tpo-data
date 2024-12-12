@@ -76,7 +76,7 @@ func main() {
 					if len(relatedCase.Value.Data) != 0 {
 						for _, data := range relatedCase.Value.Data {
 							subCase, _ := cfuncs.GetCaseDetailByCaseId(data.CaseId)
-							result = append(result, []string{fmt.Sprint(data.CaseId), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue, subCase.Value.CaseBehavior})
+							result = append(result, []string{fmt.Sprint(data.CaseNo), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue, subCase.Value.CaseBehavior})
 						}
 					}
 					var columnWidths = map[string]float64{

@@ -20,13 +20,14 @@ func main() {
 	var caseId int
 	var limit int
 	var task string
+	totalWidth := 25
+
 	var rootCmd = &cobra.Command{
 		Use:   "get-tpo-data",
 		Short: "TPO Data extractor",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			if task == "list-all" {
-				totalWidth := 25
 				fmt.Printf("Info :: Getting data from %s to %s with limit %d\n", startDate, endDate, limit)
 				cases, _ := cfuncs.GetCaseList(startDate, endDate, limit)
 				numberOfCases := len(cases.Value.Data)
@@ -56,13 +57,7 @@ func main() {
 						}
 					}
 					fmt.Printf("\nInfo :: Select %d cases to be exported\n", len(result))
-					var columnWidths = map[string]float64{
-						"A": 22,
-						"B": 50,
-						"C": 15,
-						"D": 60,
-						"E": 60,
-					}
+					columnWidths := cfuncs.ConfigHeadersWidth([]int{22, 50, 15, 60, 60})
 					var excelName string = fmt.Sprintf("case-list_%s_%s", startDate, endDate)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
@@ -79,14 +74,7 @@ func main() {
 							result = append(result, []string{fmt.Sprint(data.CaseNo), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue, subCase.Value.CaseBehavior})
 						}
 					}
-					var columnWidths = map[string]float64{
-						"A": 30,
-						"B": 50,
-						"C": 50,
-						"D": 50,
-						"E": 30,
-						"F": 80,
-					}
+					columnWidths := cfuncs.ConfigHeadersWidth([]int{30, 50, 50, 50, 30, 80})
 					var excelName string = fmt.Sprintf("related-case_%d", caseId)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
@@ -102,11 +90,7 @@ func main() {
 							result = append(result, []string{bankData.BankAccount, bankData.BankAccountName, bankData.BankName})
 						}
 					}
-					var columnWidths = map[string]float64{
-						"A": 30,
-						"B": 50,
-						"C": 50,
-					}
+					columnWidths := cfuncs.ConfigHeadersWidth([]int{30, 50, 50})
 					var excelName string = fmt.Sprintf("bank-account_%d", caseId)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}

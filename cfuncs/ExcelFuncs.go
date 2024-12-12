@@ -8,6 +8,15 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+func ConfigHeadersWidth(colsWidth []int) map[string]float64 {
+	columnWidths := make(map[string]float64)
+	for index, colWidth := range colsWidth {
+		cell, _ := excelize.ColumnNumberToName(index + 1)
+		columnWidths[cell] = float64(colWidth)
+	}
+	return columnWidths
+}
+
 func CreateExcelFileForCaseList(excelHeaders []string, caseList [][]string, name string, columnWidths map[string]float64) error {
 	currentDate := time.Now().Format("2006-01-02_15-04-05")
 	folderName := name

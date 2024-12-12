@@ -43,7 +43,7 @@ func main() {
 								string(cfuncs.RepeatRune('=', progress)),
 								string(cfuncs.RepeatRune(' ', totalWidth-progress)))
 							fmt.Printf("\rLoading... %s %d%%", bar, progress*100/totalWidth)
-							caseData, _ := cfuncs.GetRelatedIds(caseDetail.Value[0].DataId)
+							caseData, _ := cfuncs.GetRelatedCase(caseDetail.Value[0].DataId)
 
 							if len(caseData.Value.Data) != 0 {
 								var caseNos []string
@@ -66,6 +66,28 @@ func main() {
 					var excelName string = fmt.Sprintf("case-list_%s_%s", startDate, endDate)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
+			} else if task == "related-case" {
+				caseDetail, _ := cfuncs.GetCaseDetail(caseId)
+				if len(caseDetail.Value) != 0 {
+					var excelHeaders []string = []string{"เลขรับแจ้งความ", "ประเภท", "หน่วยงานที่รับผิดชอบ", "สถานะ", "มูลค่าความเสียหาย"}
+					var result [][]string
+					fmt.Println("INFO :: Getting related case")
+					relatedCase, _ := cfuncs.GetRelatedCase(caseDetail.Value[0].DataId)
+					if len(relatedCase.Value.Data) != 0 {
+						for _, data := range relatedCase.Value.Data {
+							result = append(result, []string{fmt.Sprint(data.CaseId), data.CaseType, data.OrgName, fmt.Sprint(data.CountRate), data.DamageValue})
+						}
+					}
+					var columnWidths = map[string]float64{
+						"A": 30,
+						"B": 50,
+						"C": 50,
+						"D": 50,
+						"E": 50,
+					}
+					var excelName string = fmt.Sprintf("related-case_%d", caseId)
+					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
+				}
 			} else if task == "bank-account" && caseId != 0 {
 				caseDetail, _ := cfuncs.GetCaseDetail(caseId)
 				if len(caseDetail.Value) != 0 {
@@ -86,7 +108,6 @@ func main() {
 					var excelName string = fmt.Sprintf("bank-account_%d", caseId)
 					cfuncs.CreateExcelFileForCaseList(excelHeaders, result, excelName, columnWidths)
 				}
-
 			} else {
 				fmt.Println("Command not found")
 			}
@@ -97,7 +118,7 @@ func main() {
 	rootCmd.Flags().StringVarP(&endDate, "endDate", "e", time.Now().Format("2006-01-02"), "End date in YYYY-MM-DD format (default: today)")
 	rootCmd.Flags().IntVarP(&caseId, "caseId", "c", 1, "Case id from TPO")
 	rootCmd.Flags().IntVarP(&limit, "limit", "l", 1, "Number of rows to be extracted")
-	rootCmd.Flags().StringVarP(&task, "task", "t", "list-all", "Type of task to be executed (default:list-all) [list-all, bank-account]")
+	rootCmd.Flags().StringVarP(&task, "task", "t", "list-all", "Type of task to be executed (default:list-all) [list-all, related-case, bank-account]")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalf("Error executing command: %v", err)
 	}

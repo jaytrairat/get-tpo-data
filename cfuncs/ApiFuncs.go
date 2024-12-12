@@ -64,11 +64,10 @@ func GetCaseList(startDate, endDate string, limit int) (StCaseList, error) {
 	return result, nil
 }
 
-func GetRelatedIds(caseId int) (StRelatedCase, error) {
+func GetRelatedCase(caseId int) (StRelatedCase, error) {
 	const apiUrl = "https://officer.thaipoliceonline.go.th/api/ccib/v1.0/CmsOnlineCaseInfo/%d/relation"
 
 	url := fmt.Sprintf(apiUrl, caseId)
-
 	data, _ := json.Marshal(map[string]string{
 		"Offset": "0",
 		"Length": "10000",
@@ -81,12 +80,15 @@ func GetRelatedIds(caseId int) (StRelatedCase, error) {
 
 	defer response.Body.Close()
 
+	// body, _ := io.ReadAll(response.Body)
+	// fmt.Println(string(body))
+
 	var result StRelatedCase
 	decoder := json.NewDecoder(response.Body)
 	if err := decoder.Decode(&result); err != nil {
+		fmt.Print(err)
 		return StRelatedCase{}, fmt.Errorf("failed to decode relatedCase api: %w", err)
 	}
-
 	return result, nil
 }
 

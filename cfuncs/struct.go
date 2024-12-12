@@ -26,10 +26,16 @@ type StCaseList struct {
 type StRelatedCase struct {
 	Value struct {
 		Data []struct {
-			CaseId   int    `json:"CASE_ID"`
-			InstId   int    `json:"INST_ID"`
-			CaseNo   string `json:"CASE_NO"`
-			CaseType string `json:"CASE_TYPE_ABBR"`
+			CaseId      int    `json:"CASE_ID"`
+			InstId      int    `json:"INST_ID"`
+			CaseNo      string `json:"CASE_NO"`
+			CaseType    string `json:"CASE_TYPE_ABBR"`
+			CountRate   int    `json:"COUNT_RATE"`
+			CreateDate  string `json:"CREATE_DATE"`
+			DamageValue string `json:"DAMAGE_VALUE"`
+			OrgName     string `json:"ORG_NAME"`
+			OrgNameLV1  string `json:"ORG_NAME_LV1"`
+			OrgNameLV2  string `json:"ORG_NAME_LV2"`
 		} `json:"Data"`
 	} `json:"Value"`
 }
